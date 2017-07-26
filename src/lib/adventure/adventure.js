@@ -38,11 +38,17 @@ Adventure.prototype.getLastLocation = function() {
 };
 
 Adventure.prototype.getActiveLocation = function() {
+    const scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
     const locationKeys = Object.keys(this.locations);
     const nextVisibleKey = locationKeys.find(key => {
         return (
             this.locations[key].element.offsetTop >
-            document.body.scrollTop + window.innerHeight * 0.5 // 50% in
+            scrollTop + window.innerHeight * 0.5 // 50% in
         );
     });
 
