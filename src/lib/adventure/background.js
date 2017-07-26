@@ -1,36 +1,36 @@
-// TODO: fade timer should be moved to be a constant timer like how Sprite works
+const { Tween } = require('./tweening');
 
 const Background = function(id, backgrounds) {
     this.element = document.getElementById(id);
 
-    this.element.style.height = '100%';
-    this.element.style.width = '100%';
-    this.element.style.position = 'fixed';
-    this.element.style.top = 0;
-    this.element.style.left = 0;
-    this.element.style.zIndex = 0;
-    this.element.transition = 'all 0.5s ease';
+    this.element.style.setProperty('height', '100%');
+    this.element.style.setProperty('width', '100%');
+    this.element.style.setProperty('position', 'fixed');
+    this.element.style.setProperty('top', 0);
+    this.element.style.setProperty('left', 0);
+    this.element.style.setProperty('z-index', 0);
+    this.element.style.setProperty('transition', 'all 0.5s ease');
 
     this.backgrounds = {};
     Object.keys(backgrounds).forEach(key => {
         const b = backgrounds[key];
 
         const div = document.createElement('div');
-        div.style.position = 'absolute';
-        div.style.top = '0';
-        div.style.left = '0';
-        div.style.height = '100%';
-        div.style.width = '100%';
+        div.style.setProperty('position', 'absolute');
+        div.style.setProperty('top', '0');
+        div.style.setProperty('left', '0');
+        div.style.setProperty('height', '100%');
+        div.style.setProperty('width', '100%');
 
         if (b.indexOf('url') >= 0) {
-            div.style.backgroundImage = b;
+            div.style.setProperty('background-image', b);
         } else {
-            div.style.backgroundColor = b;
+            div.style.setProperty('background-color', b);
         }
 
-        div.style.backgroundSize = 'cover';
-        div.style.opacity = 0;
-        div.style.zIndex = 1;
+        div.style.setProperty('background-size', 'cover');
+        div.style.setProperty('opacity', 0);
+        div.style.setProperty('z-index', 1);
         this.element.appendChild(div);
 
         this.backgrounds[key] = div;
@@ -49,30 +49,31 @@ Background.prototype.fadeTo = function(key, seconds) {
     if (typeof seconds === 'undefined') seconds = 0.2;
 
     this.each(background => {
-        background.style.zIndex = 1;
+        background.style.setProperty('z-index', 1);
     });
 
     this.activeBackground = this.backgrounds[key];
-    this.activeBackground.style.zIndex = 2;
+    this.activeBackground.style.setProperty('z-index', 2);
 
-    let opacity = 0;
-    const opacityChange = 1 / (seconds * 30); // 30 frames = 1 second
-
-    clearInterval(this.fadeIn);
-    this.fadeIn = setInterval(() => {
-        if (this.activeBackground.style.opacity >= 1) {
-            // Reset the opacity of things that aren't visible
+    const opacity = { value: 0 };
+    new Tween(opacity)
+        .to(
+            {
+                value: 1
+            },
+            seconds * 1000
+        )
+        .onUpdate(() => {
+            this.activeBackground.style.setProperty('opacity', opacity.value);
+        })
+        .onComplete(() => {
             this.each(background => {
                 if (background !== this.activeBackground) {
-                    background.style.opacity = 0;
+                    background.style.setProperty('opacity', 0);
                 }
             });
-            clearInterval(this.fadeIn);
-        } else {
-            opacity += opacityChange;
-            this.activeBackground.style.opacity = opacity;
-        }
-    }, 1000 / 30); // 30fps
+        })
+        .start();
 };
 
 module.exports = Background;

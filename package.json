@@ -16,5 +16,8 @@
   },
   "aunty": {
     "type": "basic-story"
+  },
+  "dependencies": {
+    "@tweenjs/tween.js": "^16.10.0"
   }
 }
