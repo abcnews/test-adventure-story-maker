@@ -1,0 +1,20 @@
+{
+  "name": "test-story",
+  "version": "1.0.0",
+  "description": "A basic ABC News story.",
+  "license": "MIT",
+  "private": true,
+  "contributors": [
+    "Nathan Hoad <nathan@nathanhoad.net>"
+  ],
+  "scripts": {
+    "start": "npm install && aunty serve --debug"
+  },
+  "devDependencies": {
+    "@abcnews/aunty": "2.2.x",
+    "prettier": "^1.5.3"
+  },
+  "aunty": {
+    "type": "basic-story"
+  }
+}
