@@ -17,28 +17,36 @@ const satellite = new Adventure.Sprite(
     '10%'
 );
 
+const planet = new Adventure.Sprite(
+    'http://3.bp.blogspot.com/-LQ3_8-Z8HlM/UWsGj4F0swI/AAAAAAAAAfA/MYa_sRe9AaQ/s1600/Fire_Planet_3_by_DennisH2010.png',
+    '500%',
+    '90%',
+    '5%'
+);
+
 const adventure = new Adventure({
     locations: {
         first: {
             onEnter(previousLocation, direction) {
                 background.fadeTo('white');
+                satellite.moveTo('-100%', '50%');
+                planet.resizeTo('0%');
             }
         },
         second: {
             onEnter(previousLocation, direction) {
                 background.fadeTo('image1');
                 satellite.moveTo('40%', '40%');
-            },
-            onExit(previousLocation, direction) {
-                if (direction === 'up') {
-                    satellite.moveTo('-100%', '50%');
-                }
+                planet.moveTo('90%', '80%');
+                planet.resizeTo('5%');
             }
         },
         third: {
             onEnter(previousLocation, direction) {
                 background.fadeTo('image2');
                 satellite.moveTo('80%', '10%');
+                planet.resizeTo('50%');
+                planet.moveTo('50%', '50%');
             }
         }
     }

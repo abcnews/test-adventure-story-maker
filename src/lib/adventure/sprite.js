@@ -4,13 +4,16 @@ const Sprite = function(url, x, y, width, height) {
     this.image = document.createElement('img');
     this.image.setAttribute('src', url);
 
-    if (typeof width !== 'undefined')
+    if (typeof width !== 'undefined') {
         this.image.style.setProperty('width', width);
-    if (typeof height !== 'undefined')
+    }
+    if (typeof height !== 'undefined') {
         this.image.style.setProperty('height', height);
+    }
 
     this.image.style.setProperty('position', 'fixed');
     this.image.style.setProperty('z-index', 2);
+    this.image.style.setProperty('transform', 'translate(-50%, -50%)');
     this.image.style.setProperty('top', y);
     this.image.style.setProperty('left', x);
 
@@ -37,6 +40,23 @@ Sprite.prototype.moveTo = function(left, top, seconds) {
         .onUpdate(() => {
             this.image.style.setProperty('left', coordinates.left + '%');
             this.image.style.setProperty('top', coordinates.top + '%');
+        })
+        .start();
+};
+
+Sprite.prototype.resizeTo = function(newWidth, seconds) {
+    if (typeof seconds === 'undefined') seconds = 0.4;
+
+    let width = {
+        value: parseInt(this.image.style.width, 10)
+    };
+
+    new Tween(width)
+        .to({ value: newWidth }, seconds * 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+            console.log('width?', width);
+            this.image.style.setProperty('width', width.value + '%');
         })
         .start();
 };
