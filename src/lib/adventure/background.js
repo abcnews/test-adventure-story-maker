@@ -46,16 +46,23 @@ Background.prototype.each = function(callback) {
 };
 
 Background.prototype.fadeTo = function(key, seconds) {
-    if (typeof seconds === 'undefined') seconds = 0.2;
+    if (typeof seconds === 'undefined') seconds = 0.4;
 
     this.each(background => {
         background.style.setProperty('z-index', 1);
     });
 
-    this.activeBackground = this.backgrounds[key];
-    this.activeBackground.style.setProperty('z-index', 2);
+    if (this.activeBackground) {
+        this.activeBackground.style.setProperty('opacity', 1);
+    }
 
-    const opacity = { value: 0 };
+    const nextBackground = this.backgrounds[key];
+    nextBackground.style.setProperty('z-index', 2);
+    nextBackground.style.setProperty('opacity', 0);
+
+    const opacity = {
+        value: parseInt(nextBackground.style.opacity, 10)
+    };
     new Tween(opacity)
         .to(
             {
@@ -64,14 +71,81 @@ Background.prototype.fadeTo = function(key, seconds) {
             seconds * 1000
         )
         .onUpdate(() => {
-            this.activeBackground.style.setProperty('opacity', opacity.value);
+            nextBackground.style.setProperty('opacity', opacity.value);
         })
         .onComplete(() => {
             this.each(background => {
-                if (background !== this.activeBackground) {
+                if (background !== nextBackground) {
                     background.style.setProperty('opacity', 0);
                 }
             });
+            this.activeBackground = nextBackground;
+        })
+        .start();
+};
+
+Background.prototype.slideTo = function(key, seconds) {
+    if (typeof seconds === 'undefined') seconds = 0.4;
+
+    this.each(background => {
+        background.style.setProperty('z-index', 1);
+    });
+
+    // Outgoing background
+    const currentBackground = this.activeBackground;
+    if (currentBackground) {
+        let currentBackgroundLeft = {
+            value: 0
+        };
+
+        new Tween(currentBackgroundLeft)
+            .to(
+                {
+                    value: -100
+                },
+                seconds * 1000
+            )
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(() => {
+                currentBackground.style.setProperty(
+                    'left',
+                    currentBackgroundLeft.value + '%'
+                );
+            })
+            .onComplete(() => {
+                currentBackground.style.setProperty('left', 0);
+            })
+            .start();
+    }
+
+    // Incoming background
+    const nextBackground = this.backgrounds[key];
+    nextBackground.style.setProperty('z-index', 2);
+    nextBackground.style.setProperty('left', '100%');
+    nextBackground.style.setProperty('opacity', 1);
+
+    let nextBackgroundLeft = {
+        value: 100
+    };
+
+    new Tween(nextBackgroundLeft)
+        .to(
+            {
+                value: 0
+            },
+            seconds * 1000
+        )
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+            nextBackground.style.setProperty(
+                'left',
+                nextBackgroundLeft.value + '%'
+            );
+            nextBackground.style.setProperty('opacity', 1);
+        })
+        .onComplete(() => {
+            this.activeBackground.style.setProperty('opacity', 0);
+            this.activeBackground = nextBackground;
         })
         .start();
 };

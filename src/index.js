@@ -35,7 +35,7 @@ const adventure = new Adventure({
         },
         second: {
             onEnter(previousLocation, direction) {
-                background.fadeTo('image1');
+                background.slideTo('image1');
                 satellite.moveTo('40%', '40%');
                 planet.moveTo('90%', '80%');
                 planet.resizeTo('5%');
@@ -45,6 +45,13 @@ const adventure = new Adventure({
             onEnter(previousLocation, direction) {
                 background.fadeTo('image2');
                 satellite.moveTo('80%', '10%');
+                planet.resizeTo('50%');
+                planet.moveTo('50%', '50%');
+            }
+        },
+        fourth: {
+            onEnter() {
+                background.slideTo('image1');
                 planet.resizeTo('50%');
                 planet.moveTo('50%', '50%');
             }

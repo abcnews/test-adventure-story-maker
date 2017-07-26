@@ -55,7 +55,6 @@ Sprite.prototype.resizeTo = function(newWidth, seconds) {
         .to({ value: newWidth }, seconds * 1000)
         .easing(TWEEN.Easing.Quadratic.Out)
         .onUpdate(() => {
-            console.log('width?', width);
             this.image.style.setProperty('width', width.value + '%');
         })
         .start();
